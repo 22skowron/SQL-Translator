@@ -1,0 +1,94 @@
+@import "typography/typography";
+
+// SCROLLBARS
+:root {
+  --scrollbar-width: 1rem;
+  --scrollbar-height: 1rem;
+}
+
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-height);
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--grey-scroll-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--grey-scroll-thumb);
+  border-radius: var(--m3-corner-large);
+  border: 0.25rem solid var(--grey-scroll-track);
+
+  &:hover {
+    background-color: var(--grey-scroll-thumb-hover);
+  }
+
+  &:active {
+    background-color: var(--grey-scroll-thumb-active);
+  }
+}
+
+::-webkit-scrollbar-button {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-height);
+  background-color: var(--grey-scroll-track);
+  background-repeat: no-repeat;
+  background-position: center;
+
+  &:hover {
+    background-color: var(--grey-scroll-thumb);
+  }
+
+  &:active {
+    background-color: var(--grey-scroll-thumb-hover);
+  }
+
+  /* Vertical Scrollbar Buttons */
+  &:vertical {
+    &:increment {
+      background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"><path d="M7 10l5 5 5-5H7z"/></svg>'); /* Down Arrow */
+    }
+
+    &:decrement {
+      background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"><path d="M7 14l5-5 5 5H7z"/></svg>'); /* Up Arrow */
+    }
+  }
+
+  /* Horizontal Scrollbar Buttons */
+  &:horizontal {
+    &:increment {
+      background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"><path d="M10 7l5 5-5 5V7z"/></svg>'); /* Right Arrow */
+    }
+
+    &:decrement {
+      background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"><path d="M14 7l-5 5 5 5V7z"/></svg>'); /* Left Arrow */
+    }
+  }
+}
+
+// Buttons render doubled on body
+body::-webkit-scrollbar-button {
+  display: none;
+}
+
+// Resize handle overlay
+@mixin resize-handle-overlay {
+  content: "⤡";
+  pointer-events: none;
+
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-height);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  right: 0;
+  bottom: 0;
+
+  @include m3-label-small;
+  color: black;
+  background-color: var(--grey-scroll-thumb);
+}

@@ -1,19 +1,25 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ThemeSwitchComponent } from './components/theme-switch/theme-switch.component';
 import { ThemeService } from './services/theme.service';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { AuthService } from './services/auth.service';
+import { RowLimitService } from './services/row-limit.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ThemeSwitchComponent],
+  imports: [RouterOutlet, NavbarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
   readonly themeService = inject(ThemeService);
+  readonly authService = inject(AuthService);
+  readonly rowLimitService = inject(RowLimitService);
 
   ngOnInit(): void {
-    this.themeService.initializeAppTheme();
+    this.authService.syncAuthenticationState();
+    this.themeService.syncAppTheme();
+    this.rowLimitService.syncRowLimit();
   }
 }

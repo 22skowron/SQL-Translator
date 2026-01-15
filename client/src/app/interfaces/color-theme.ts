@@ -1,5 +1,6 @@
-export const ColorTheme = {
-  light: 'light',
-  dark: 'dark',
+export const ThemeStylesheetLink = {
+  light: './app-theme-light.css',
+  dark: './app-theme-dark.css',
 } as const;
-export type ColorTheme = (typeof ColorTheme)[keyof typeof ColorTheme];
+export type PrimeNgThemeLink =
+  (typeof ThemeStylesheetLink)[keyof typeof ThemeStylesheetLink];

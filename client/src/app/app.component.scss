@@ -3,28 +3,19 @@
 :host {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  flex: 1;
+  padding-bottom: 2rem;
 }
 
-.titles-container {
+.main-container {
+  flex: 1;
   display: flex;
-  padding: 0 0.75rem;
-  flex-direction: column;
+  justify-content: center;
+  // background-color: yellow;
 }
 
-.title-main {
-  @include m3-headline-small;
-  color: var(--sys-on-surface);
-}
-
-.subtitle {
-  @include m3-title-medium;
-  color: var(--sys-on-surface);
-}
-
-app-theme-switch {
-  position: fixed;
-
-  top: 0.4rem;
-  left: 0.4rem;
+.app-content {
+  width: 95vw;
+  max-width: 70rem;
+  // background-color: green;
 }

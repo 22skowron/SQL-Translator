@@ -1,5 +1,8 @@
+import { RowLimit } from "../utils/constants";
+
 export interface QueryPayload {
-    query: string
+  query: string;
+  rowLimit: RowLimit;
 }
 
 export interface AuthPayload {

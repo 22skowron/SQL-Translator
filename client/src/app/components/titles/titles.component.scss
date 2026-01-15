@@ -1,0 +1,15 @@
+@import "./../../../design-system/typography/typography_mixins";
+
+.titles-container {
+  display: flex;
+  padding: 0 0.75rem;
+  flex-direction: column;
+}
+
+.title-main {
+  @include m3-headline-small;
+}
+
+.subtitle {
+  @include m3-title-medium;
+}

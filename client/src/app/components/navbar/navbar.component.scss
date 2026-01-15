@@ -1,0 +1,44 @@
+@import "./../../../design-system/typography/typography_mixins";
+
+.navbar {
+  height: 3.3rem;
+  padding: 0.4rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  // background-color: orange;
+}
+
+.right-side-container {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.row-limit-container {
+  padding-left: 0.6rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--sys-surface-container-high);
+  border-radius: var(--m3-corner-extra-small);
+  gap: inherit;
+}
+
+.row-limit-text {
+  @include m3-label-large;
+  color: var(--sys-on-surface);
+}
+
+app-theme-switch {
+  align-self: start;
+}
+
+::ng-deep {
+  .p-dropdown-item,
+  .p-dropdown-label {
+    height: 2rem;
+    display: flex;
+    align-items: center;
+  }
+}

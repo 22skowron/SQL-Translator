@@ -11,12 +11,15 @@ import { catchError } from 'rxjs/operators';
 import { MessageService } from '../services/message.service';
 import { AuthService } from '../services/auth.service';
 import { APIErrorCode, APIErrorCodeMapping } from '../interfaces/error-codes';
+import { APIErrorResponse } from '../interfaces/api-responses';
+import { DataFetchingService } from '../services/data-fetching.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   constructor(
     private messageService: MessageService,
-    private authService: AuthService
+    private authService: AuthService,
+    private dataFetchingService: DataFetchingService
   ) {}
 
   intercept(
@@ -28,18 +31,13 @@ export class ErrorInterceptor implements HttpInterceptor {
 
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-        const { status, errorCode } = error.error;
-
-        if (
-          status === 'error' &&
-          Object.values(APIErrorCode).includes(errorCode)
-        ) {
-          // Handle known errors
-          this.handleAPIError(errorCode);
+        // Handle known errors
+        if (this.isKnownAPIErrorResponse(error.error)) {
+          this.handleAPIError(error.error);
         } else {
-          // Default generic error message if no mapping found
+          // Default generic error message
           this.messageService.errorMessage.set(
-            'Nie udało się połączyć z serwerem.'
+            'Failed to connect to the server.'
           );
         }
 
@@ -48,44 +46,76 @@ export class ErrorInterceptor implements HttpInterceptor {
     );
   }
 
-  handleAPIError(errorCode: APIErrorCode): void {
-    const error = this.APIErrorCodeMapping[errorCode];
-
-    this.messageService.errorMessage.set(error.message);
-    if (error.action) {
-      error.action();
-    }
+  // Type guard to ensure that the error is of correct type and has a known errorCode
+  private isKnownAPIErrorResponse(error: any): error is APIErrorResponse {
+    return (
+      typeof error === 'object' &&
+      error !== null &&
+      error.status === 'error' &&
+      typeof error.errorCode === 'string' &&
+      Object.values(APIErrorCode).includes(error.errorCode)
+    );
   }
 
-readonly APIErrorCodeMapping: APIErrorCodeMapping = {
-  'NO_TOKEN_ERR': {
-    message: 'Twoja sesja wygasła. Zaloguj się ponownie aby kontynuować.',
-    action: () => {
-      this.authService.removeAuthenticatedFlag();
-      this.authService.isSessionExpired.set(true);
+  private handleAPIError(APIError: APIErrorResponse): void {
+    // Set error message
+    const errorMapping = this.APIErrorCodeMapping[APIError.errorCode];
+    if (
+      APIError.errorDetails?.message &&
+      (APIError.errorCode === APIErrorCode.MISSING_PARAM_ERR ||
+        APIError.errorCode === APIErrorCode.INVALID_PARAM_ERR)
+    ) {
+      this.messageService.errorMessage.set(APIError.errorDetails.message);
+    } else {
+      this.messageService.errorMessage.set(errorMapping.message);
+    }
+
+    // Update sqlQueryFormatted if present on error response
+    if (APIError.data?.sqlQueryFormatted) {
+      this.dataFetchingService.sqlQueryFormatted.set(
+        APIError.data?.sqlQueryFormatted
+      );
+      this.dataFetchingService.formattedAnswer.set('');
+      this.dataFetchingService.rowData.set([]);
+    }
+
+    // Execute any additional action if defined
+    errorMapping.action?.();
+  }
+
+  readonly APIErrorCodeMapping: APIErrorCodeMapping = {
+    MISSING_PARAM_ERR: {
+      message: 'Required paramater missing.',
     },
-  },
-  'INVALID_VERIFICATION_TOKEN_ERR': {
-    message: 'Twoja sesja wygasła. Zaloguj się ponownie aby kontynuować.',
-    action: () => {
-      this.authService.removeAuthenticatedFlag();
-      this.authService.isSessionExpired.set(true);
+    INVALID_PARAM_ERR: {
+      message: 'Invalid parameter value.',
     },
-  },
-  'INVALID_PASSWORD_ERR': {
-    message: 'Podano nieprawidłowe hasło.',
-  },
-  'NO_QUERY_ERR': {
-    message: 'Nie wprowadzono zapytania. Proszę podać zapytanie, aby kontynuować.',
-  },
-  'NO_PASSWORD_ERR': {
-    message: 'Nie wprowadzono hasła. Proszę podać hasło, aby kontynuować.',
-  },
-  'INTERNAL_SERVER_ERR': {
-    message: 'Wystąpił błąd serwera. Spróbuj ponownie później.',
-  },
-  'UNSUPPORTED_QUERY_ERR': {
-    message: 'Wygląda na to, że chcesz wykonać zapytanie inne niż SELECT, co nie jest obsługiwane.',
-  },
-};
+    NO_TOKEN_ERR: {
+      message: 'Your session has expired. Please log in again to continue.',
+      action: () => {
+        this.authService.persistLoggedOutState();
+        this.authService.isSessionExpired.set(true);
+      },
+    },
+    INVALID_VERIFICATION_TOKEN_ERR: {
+      message: 'Your session has expired. Please log in again to continue.',
+      action: () => {
+        this.authService.persistLoggedOutState();
+        this.authService.isSessionExpired.set(true);
+      },
+    },
+    INVALID_PASSWORD_ERR: {
+      message: 'Invalid password provided.',
+    },
+    INTERNAL_SERVER_ERR: {
+      message: 'A server error occurred. Please try again later.',
+    },
+    UNSUPPORTED_QUERY_ERR: {
+      message:
+        'It seems that you are trying to perform a non-SELECT query, which is not supported.',
+    },
+    LLM_INPUT_TO_BIG_ERR: {
+      message: 'Input data was to big to be processed by AI.'
+    },
+  };
 }

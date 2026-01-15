@@ -3,15 +3,11 @@
 A simple web application designed for the company management board to streamline the retrieval of key information from its internal database. The application showcases how natural language queries can be translated into SQL with a help of a LLM and executed against the relational database, allowing for intuitive information retrieval without requiring knowledge of SQL syntax. 
 
 
-Currently, the application is implemented for the fictitious "Sakila LLC" company, using the **[Sakila Database](https://dev.mysql.com/doc/sakila/en/sakila-introduction.html "Go to official Sakila db description page")** as a sample dataset.
-
-Previous version of the app was **[successfully commercially deployed](https://github.com/ardium-pl/SQL-translator "Go to deployment repo")** for the management board of the BUDMAT company, back when I worked for [Ardium](https://github.com/ardium-pl "Go to Ardium GitHub").
-
-The app can be easily tailored to operate on Your company's database. For more information feel free to reach me via email: [szymonskowronnn@gmail.com](mailto:szymonskowronnn@gmail.com "Reach me via email").
+Currently, the application is implemented for the fictitious _Sakila LLC_ company, using the **[Sakila Database](https://dev.mysql.com/doc/sakila/en/sakila-introduction.html "Go to official Sakila db description page")** as a sample dataset.
 
 # Interface
 
-The app operates in a browser and    has a simple interface which (after successful authorization) allows the user to enter the query in natural language and get an accurate answer from AI assistant based on the results retrieved from the database.
+The app operates in a browser and has a simple interface which (after successful authorization) allows the user to enter the query in natural language and get an accurate answer from AI assistant based on the results retrieved from the database.
 
 # About the Sakila Database
 
@@ -22,10 +18,10 @@ The **[Sakila Database](https://dev.mysql.com/doc/sakila/en/sakila-introduction.
 1. Clone the repository:
 
    ```
-   git clone https://github.com/ardium-pl/SQL-translator.git
+   git clone https://github.com/22skowron/SQL-Translator.git
    ```
 
-2. Frontend setup (console 1):
+2. Frontend setup (terminal 1):
 
    ```
    cd ./client
@@ -33,7 +29,7 @@ The **[Sakila Database](https://dev.mysql.com/doc/sakila/en/sakila-introduction.
    ng serve
    ```
 
-3. Backend setup (console 2):
+3. Backend setup (terminal 2):
    ```
    cd ./server
    npm install
